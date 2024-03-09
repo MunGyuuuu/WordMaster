@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog
 from openpyxl import Workbook, load_workbook
+import os
 from os.path import basename
 
-button_data = []  # 버튼 데이터를 저장할 리스트
-
+current_dir = os.getcwd()
+button_data = [] 
 check_password = '0000'
 
 # 엑셀 파일에서 버튼 데이터 불러오기
@@ -97,7 +98,7 @@ def open_button_add_window():
     select_file_button = tk.Button(root_addbutton, text="파일 선택", command=lambda: get_file_path(textbox_addbutton_filepath, textbox_addbutton_name))
     select_file_button.pack()
 
-    summit_button = tk.Button(root_addbutton, text="제출", command=lambda: summit_check_button(textbox_addbutton_name.get(), textbox_addbutton_filepath.get(), root_addbutton),create_initial_window)
+    summit_button = tk.Button(root_addbutton, text="제출", command=lambda: summit_check_button(textbox_addbutton_name.get(), textbox_addbutton_filepath.get(),root_addbutton))
     summit_button.pack()
 
 # 창을 닫는 함수
@@ -117,10 +118,12 @@ def summit_check_button(name, filepath, root_addbutton):
     button_data.append((name, filepath))
     print("버튼 추가 완료:", name)
     root_addbutton.destroy()  # 버튼 추가 창 닫기
+    root_word.destroy() #기존의 창 닫기
     word_section()  # 단어장 선택 창 업데이트
-
+    
 # 단어장 선택하는 창 띄우기
 def word_section():
+    global root_word
     root_word = tk.Tk()
     root_word.title("단어장 선택하는 창")
     root_word.geometry("200x300")
@@ -163,7 +166,11 @@ def save_button_data():
         ws.cell(row=idx, column=1, value=name)
         ws.cell(row=idx, column=2, value=filepath)
 
-    wb.save("savefilenameandfilepath.xlsx")  # 엑셀 파일로 저장
+    #현재 코드가 있는 파일과 같은곳에 저장
+    file_name = "savefilenameandfilepath.xlsx"
+    file_path = os.path.join(current_dir, file_name)
+
+    wb.save(file_path)  # 엑셀 파일로 저장
 
 # 엑셀 파일에서 버튼 데이터 불러오기
 def load_button_data():
