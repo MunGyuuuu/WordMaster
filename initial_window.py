@@ -1,14 +1,18 @@
-from tkinter import Tk, Button, CENTER
-from password_dialog import show_password_dialog
-from word_section import word_section, load_button_data
+import tkinter as tk
+from wordsection import create_word_selection_window
 
-root_first = Tk()
-root_first.title("HOWTOENGLISH")
-root_first.geometry("500x500+500+150")
-root_first.resizable(True, True)
+def create_initial_window():
+    root = tk.Tk()
+    root.title("초기 창")
+    root.geometry("300x200")
 
-# 초기 화면에 있는 버튼 (단어장 선택)
-make_button_word_section = Button(root_first, text="단어장 선택", relief="raised", borderwidth=5, command=lambda: [load_button_data(), word_section()])
-make_button_word_section.place(relx=0.5, rely=0.5, anchor=CENTER, relwidth=0.5, relheight=0.5)  # CENTER 사용
+    label = tk.Label(root, text="초기 창입니다.")
+    label.pack(pady=20)
 
-root_first.mainloop()
+    btn_select_word = tk.Button(root, text="단어장 선택", command=create_word_selection_window)
+    btn_select_word.pack(pady=10)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_initial_window()
