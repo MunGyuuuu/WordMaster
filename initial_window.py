@@ -6,9 +6,6 @@ def create_initial_window():
     root.title("초기 창")
     root.geometry("300x200")
 
-    label = tk.Label(root, text="초기 창입니다.")
-    label.pack(pady=20)
-
     btn_select_word = tk.Button(root, text="단어장 선택", command=create_word_selection_window)
     btn_select_word.pack(pady=10)
 

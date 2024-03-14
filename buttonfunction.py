@@ -13,8 +13,12 @@ def load_button_data():
     except FileNotFoundError:
         return []
 
-def add_button():
-    file_path = filedialog.askopenfilename(title="파일 선택", filetypes=(("Excel files", "*.xlsx"), ("모든 파일", "*.*")))
+def open_excel_file():
+    filedialog = filedialog.askopenfilename(title="파일 선택", filetypes=(("Excel files", "*.xlsx"), ("모든 파일", "*.*")))
+    return filedialog
+
+
+def summit_add_button(file_path,button_name=None):
     if file_path:
         wb = load_workbook("savebuttondata.xlsx")
         sheet = wb.active
