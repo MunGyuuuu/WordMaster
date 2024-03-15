@@ -1,3 +1,5 @@
+import os
+import csv
 from tkinter import filedialog, simpledialog, messagebox
 from openpyxl import load_workbook
 import tkinter as tk
@@ -13,24 +15,36 @@ def load_button_data():
     except FileNotFoundError:
         return []
 
-def open_excel_file():
+def show_success(value=None):
+    
+    if value:
+        text = value+"되었습니다."
+        messagebox.showinfo("성공",text)
+    else:
+        messagebox.showinfo("실패","실패하였습니다.")
+
+def write_csv(data):
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    csv_data = os.path.join(script_dir, 'database.csv')
+    path = script_dir +'\\'+'database.csv'
+    with open(path, 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(data)
+        
+        
+        
+
+def open_file():
     filedialog = filedialog.askopenfilename(title="파일 선택", filetypes=(("Excel files", "*.xlsx"), ("모든 파일", "*.*")))
     return filedialog
 
 
 def summit_add_button(file_path,button_name=None):
-    if file_path:
-        wb = load_workbook("savebuttondata.xlsx")
-        sheet = wb.active
-        button_name = simpledialog.askstring("버튼 이름 입력", "추가할 버튼의 이름을 입력하세요:")
-        if button_name:
-            sheet.append([button_name, file_path])
-            wb.save("savebuttondata.xlsx")
-            messagebox.showinfo("성공", "버튼 추가가 완료되었습니다.")
-        else:
-            messagebox.showwarning("경고", "버튼 이름을 입력하세요.")
-    else:
-        messagebox.showwarning("경고", "파일을 선택하세요.")
+    data = []
+    filename, extension = os.path.splitext(excel_file_path)
+    filename_only = os.path.basename(filename)
+    button_name = filename_only
+    write_csv(data)
 
 def delete_button():
     file_path = filedialog.askopenfilename(title="파일 선택", filetypes=(("Excel files", "*.xlsx"), ("모든 파일", "*.*")))
