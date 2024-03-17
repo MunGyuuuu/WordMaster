@@ -11,5 +11,4 @@ def create_initial_window():
 
     root.mainloop()
 
-if __name__ == "__main__":
-    create_initial_window()
+create_initial_window()

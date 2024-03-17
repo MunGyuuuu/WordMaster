@@ -1,5 +1,6 @@
 from tkinter import Tk, Entry, Label, Button, messagebox
 import tkinter as tk
+from add_button_dialog import add_button_dialog
 
 check_password = '0000'
 
