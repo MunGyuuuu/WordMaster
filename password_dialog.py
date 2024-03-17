@@ -1,6 +1,5 @@
 from tkinter import Tk, Entry, Label, Button, messagebox
 import tkinter as tk
-from add_button_dialog import add_button_dialog
 
 check_password = '0000'
 
@@ -34,3 +33,5 @@ def verify_and_continue(password, window, callback_function):
     else:
         # 잘못된 비밀번호를 입력한 경우 메시지 출력
         messagebox.showerror("오류", "잘못된 비밀번호입니다.")
+
+

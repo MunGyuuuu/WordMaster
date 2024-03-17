@@ -1,7 +1,8 @@
 import tkinter as tk
 import os
 from tkinter import filedialog
-from buttonfunction import summit_add_button
+import csv
+from tkinter import messagebox
 
 def add_textbox(filepath_textbox,buttonname_textbox):
     path = filedialog.askopenfilename()
@@ -11,12 +12,35 @@ def add_textbox(filepath_textbox,buttonname_textbox):
         buttonname_textbox.insert(0,buttonname)
     filepath_textbox.insert(0,path)
 
-def add_button_dialog():
+def write_csv(data):
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    csv_data = os.path.join(script_dir, 'database.csv')
+    path = script_dir + '\\' + 'database.csv'
+    try:
+        with open(path, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(data) 
+        return 1 
+    except Exception as e:
+        return 0
+    
+
+
+def summit_add_button(file_path, button_name, root):
+    data = [button_name, file_path]
+    if write_csv(data):
+        messagebox.showinfo("성공", "저장되었습니다.")
+        root.destroy()  # 현재 창 닫기
+        create_word_selection_window()  # 새 창 열기
+    else:
+        messagebox.showinfo("실패", "실패하였습니다.")
+
+def add_button_dialog_function():
     root_addbuttondialog = tk.Tk()
     root_addbuttondialog.title("버튼 추가하는 창")
     root_addbuttondialog.geometry("370x100")
     root_addbuttondialog.resizable(width=False, height=False)
-    
+
 
     textofbuttonname = tk.Label(root_addbuttondialog,text="버튼이름")
     textofbuttonname.grid(row=0, column=0, padx=5, pady=5)
@@ -31,8 +55,9 @@ def add_button_dialog():
     buttonoffilepath.grid(row=1,column=2,padx=(0,20),pady=5)
 
 
-    summitbutton = tk.Button(root_addbuttondialog,text="제출",width = 20,command=lambda: summit_add_button(textboxofbuttonname.get(), select_file))
+    summitbutton = tk.Button(root_addbuttondialog,text="제출",width = 20,command=lambda: summit_add_button(textboxoffilepath.get(), textboxofbuttonname.get(),root_addbuttondialog))
     summitbutton.grid(sticky='S', column=1,padx=5)
-    
+
     root_addbuttondialog.mainloop()
-add_button_dialog()
+
+add_button_dialog_function()
