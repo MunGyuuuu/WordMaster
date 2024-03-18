@@ -36,18 +36,23 @@ def add_textbox(filepath_textbox,buttonname_textbox):
         buttonname_textbox.insert(0,buttonname)
     filepath_textbox.insert(0,path)
 
+
 def write_csv(data_list):
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    csv_data = os.path.join(script_dir, 'database.csv')
-    path = script_dir + '\\' + 'database.csv'
+    csv_path = os.path.join(script_dir, 'database.csv')
     try:
-        with open(path, 'a', newline='') as file:
+        with open(csv_path, 'a', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            for data in data_list:
-                writer.writerow(data)
-        return 1 
+            for item in data_list:
+                writer.writerow(item)
+        return True 
+    except FileNotFoundError:
+        messagebox.show("파일을 찾을 수 없습니다:", csv_path)
+        return False
     except Exception as e:
-        return 0
+        messagebox.show("오류가 발생했습니다:", e)
+        return False
+    
     
 
 def read_csv():
@@ -70,7 +75,7 @@ def read_csv():
 
 
 def summit_add_button(file_path, button_name, root_addbuttondialog, root):
-    data = [button_name, file_path]
+    data = [(button_name, file_path)]
     if write_csv(data):
         messagebox.showinfo("성공", "저장되었습니다.")
         root_addbuttondialog.destroy()
@@ -106,13 +111,46 @@ def add_button_dialog_function(root):
     root_addbuttondialog.mainloop()
 
 
-def delete_button_dialog_function():
-    root_deletebuttondialog = tk.Tk()
-    root_deletebuttondialog.title("버튼삭제하는 창")
+def delete_button(button_names, button_checklist):
+    csv_path = 'database.csv'  # CSV 파일 경로
+    data = read_csv()
+    new_data = [line for line in data if line[0] not in button_names and not button_checklist[line[0]].get()]
+    with open(csv_path, 'w', newline='', encoding='utf-8') as file:  
+        writer = csv.writer(file)
+        for item in new_data:
+            writer.writerow(item)
+
+
+def summit_delete_button(button_checklist, root_deletebuttondialog,root):
+    data = []
+    for button_name, checked in button_checklist.items():
+        if checked.get():
+            data.append(button_name)
+    delete_button(data, button_checklist)
+    root_deletebuttondialog.destroy()
+    root.destroy()
+    create_word_selection_window()
+
+def delete_button_dialog_function(root):
+    root_deletebuttondialog = tk.Toplevel(root)
+    root_deletebuttondialog.title("버튼 삭제")
     root_deletebuttondialog.geometry("300x500")
-    
-    labeldeletebutton = tk.Label(root_deletebuttondialog,text="버튼을 삭제하시면 체크박스에 체크해주세요")
-    labeldeletebutton.grid(row=0)
-    
+
+    label_delete_button = tk.Label(root_deletebuttondialog, text="삭제할 버튼을 선택하세요:")
+    label_delete_button.grid(row=0)
+
+    button_data = read_csv()
+    button_checklist = {}
+
+    for i, (button_name, _) in enumerate(button_data):
+        check_var = tk.BooleanVar()
+        check_button = tk.Checkbutton(root_deletebuttondialog, text=button_name, variable=check_var)
+        check_button.grid(row=i+1, sticky="w")
+        button_checklist[button_name] = check_var
+
+    submit_button = tk.Button(root_deletebuttondialog, text="삭제", command=lambda: summit_delete_button(button_checklist, root_deletebuttondialog,root))
+    submit_button.grid(row=len(button_data) + 1)
+
     root_deletebuttondialog.mainloop()
-delete_button_dialog_function()
+
+create_word_selection_window()
