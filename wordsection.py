@@ -3,6 +3,8 @@ import os
 from tkinter import filedialog, messagebox
 import csv
 from password_dialog import show_password_dialog
+from wordoutput import outputdialog
+
 
 def create_word_selection_window():
     root = tk.Tk()
@@ -21,10 +23,12 @@ def create_word_selection_window():
 
 def update_window(root):
     data = read_csv()
+    if data == None:
+        return None
     for line in data:
         button_name = line[0]
         file_path = line[1]
-        button = tk.Button(root, text=button_name)
+        button = tk.Button(root, text=button_name,lambda : ouputdialog(file_path))
         button.pack()
 
     
@@ -37,6 +41,20 @@ def add_textbox(filepath_textbox,buttonname_textbox):
     filepath_textbox.insert(0,path)
 
 
+def read_csv():
+    data = []
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    csv_path = os.path.join(script_dir, 'database.csv')
+    try:
+        with open(csv_path, 'r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row:  # 빈 줄 건너뛰기
+                    data.append(row)
+        return data
+    except Exception as e:
+        messagebox.showinfo("오류", f"추가된 버튼이 없습니다. 에러 메시지: {str(e)}")
+        return None
 def write_csv(data_list):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     csv_path = os.path.join(script_dir, 'database.csv')
@@ -53,27 +71,6 @@ def write_csv(data_list):
         messagebox.show("오류가 발생했습니다:", e)
         return False
     
-    
-
-def read_csv():
-    data = []
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    csv_data = os.path.join(script_dir, 'database.csv')
-    path = script_dir + '\\' + 'database.csv'
-    try:
-        with open(path, 'r', newline='') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if row:  # 빈 줄 건너뛰기
-                    data.append(row)
-        return data
-    except Exception as e:
-        messagebox.showinfo("오류", "파일을 읽어오는 도중 오류가 발생했습니다.")
-        return None
-    
-    
-
-
 def summit_add_button(file_path, button_name, root_addbuttondialog, root):
     data = [(button_name, file_path)]
     if write_csv(data):
